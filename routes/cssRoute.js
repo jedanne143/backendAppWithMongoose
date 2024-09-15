@@ -10,7 +10,7 @@ router.use((res,req,next) => {
     next()
 })
 
-//[READ all CSS contents]
+//[READ] all CSS contents 
 router.get('/', async (req, res) => {
     try {
         // Find all documents in the css collection
@@ -21,6 +21,17 @@ router.get('/', async (req, res) => {
         res.status(500).send('Error fetching data from css collection');
     }
 })
+//[READ] a CSS content by id
+router.get("/:id", async (req, res) => {
+    try{
+        const cssId = req.params.id
+        const cssQuestion = await cssQ.findById(cssId)
+        // Send the data as JSON in the response 
+        res.json({cssQuestion:cssQuestion});    
+        } catch (error) {
+            res.status(500).send('Error fetching data from css collection');
+        }
+  });
 //[CREATE] a question
 router.post('/', async (req,res) => {
     try{
@@ -40,6 +51,7 @@ router.post('/', async (req,res) => {
         res.status(400).json({ error: err.message });
     }
 })
+
 //[UPDATE]
 router.put("/:id", async (req, res) => {
     try{
@@ -53,8 +65,8 @@ router.put("/:id", async (req, res) => {
             option3 : option3,
             points: points
         })
-    const updatedCSS = await cssQ.findById(cssId)
-    res.json({cssQuestion: updatedCSS})
+        const updatedCSS = await cssQ.findById(cssId)
+        res.json({cssQuestion: updatedCSS})
     } catch (err){
         //for handling Mongoose validation errors
         res.status(400).json({ error: err.message });

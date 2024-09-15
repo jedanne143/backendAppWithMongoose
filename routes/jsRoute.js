@@ -10,7 +10,7 @@ router.use((res,req,next) => {
     next()
 })
 
-//[READ all JS contents]
+//[READ] all JS contents
 router.get('/', async (req, res) => {
     try {
         // Find all documents in the js collection
@@ -21,6 +21,17 @@ router.get('/', async (req, res) => {
         res.status(500).send('Error fetching data from js collection');
     }
 })
+//[READ] a HTML content by id
+router.get("/:id", async (req, res) => {
+    try{
+        const jsId = req.params.id
+        const jsQuestion = await jsQ.findById(jsId)
+        // Send the data as JSON in the response 
+        res.json({jsQuestion:jsQuestion});    
+        } catch (error) {
+            res.status(500).send('Error fetching data from css collection');
+        }
+  });
 //[CREATE] a question
 router.post('/', async (req,res) => {
     try{
