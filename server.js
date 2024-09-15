@@ -19,10 +19,12 @@ const logMiddleware = (req, res, next) => {
 }
 app.use(logMiddleware)
 //ROUTES
+
 //[READ]
 app.get('/', (req, res) => {
     res.send('This is the root directory')
 })
+//[READ all CSS contents]
 app.get('/css', async (req, res) => {
     try {
         // Find all documents in the css collection
@@ -33,8 +35,58 @@ app.get('/css', async (req, res) => {
         res.status(500).send('Error fetching data from css collection');
     }
 })
+//[CREATE] a question
+app.post('/css', async (req,res) => {
+    try{
+        const {question, answer, option1, option2, option3, points} = req.body
+        const cssQuestion = await cssQ.create({
+            question : question,
+            answer : answer,
+            option1: option1,
+            option2: option2,
+            option3 : option3,
+            points: points
+        })
+        console.log("Successfully added a CSS question")
+        res.json({cssQuestion : cssQuestion})
+    } catch (err) {
+        //for handling Mongoose validation errors
+        res.status(400).json({ error: err.message });
+    }
+})
+//[UPDATE]
+app.put("/css/:id", async (req, res) => {
+    try{
+        const cssId = req.params.id
+        const {question,answer,option1, option2, option3, points}= req.body
+        const css =await cssQ.findByIdAndUpdate(cssId,{
+            question : question,
+            answer : answer,
+            option1: option1,
+            option2: option2,
+            option3 : option3,
+            points: points
+        })
+    const updatedCSS = await cssQ.findById(cssId)
+    res.json({cssQuestion: updatedCSS})
+    } catch (err){
+        //for handling Mongoose validation errors
+        res.status(400).json({ error: err.message });
+    }
+  });
+//[DELETE]
+app.delete('/css/:id', async (req, res) => {
+    const cssId = req.params.id
+    await cssQ.deleteOne({
+        _id : cssId
+    })
+    res.json({success: `${cssId} deleted`})
+})
+app.listen(PORT , () =>{
+    console.log(`Listening on PORT ${PORT}`)
+})
 
-//[GET all HTML contents]
+//[READ all HTML contents]
 app.get('/html', async (req, res) => {
     try {
         // Find all documents in the html collection
